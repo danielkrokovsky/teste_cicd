@@ -43,7 +43,7 @@ jobs:
 
       # 3. Build e Testes com Maven
       - name: Build and Test with Maven
-        run: mvn -B -V clean package -DskipTests
+        run: mvn -B -V clean verify
 
       # 4. Análise de Código Estático (Exemplo com SonarQube)
       # Nota: É preciso configurar SONAR_TOKEN e SONAR_HOST_URL nos Secrets do repositório

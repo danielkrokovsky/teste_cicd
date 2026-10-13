@@ -12,6 +12,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+
+      - name: Cache NVD data
+        uses: actions/cache@v4
+        with:
+          path: ${{ github.workspace }}/nvd-db
+          key: ${{ runner.os }}-nvd-${{ github.run_id }} # Muda a cada build para forçar a atualização dos deltas
+          restore-keys: |
+            ${{ runner.os }}-nvd-
+
       # 1. Checkout do código
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -40,8 +49,25 @@ jobs:
 #        run: mvn sonar:sonar -Dsonar.projectName="Meu Projeto Spring Boot"
 
       # 5. Análise de Vulnerabilidades em Dependências (OWASP Dependency-Check)
-      - name: Run OWASP Dependency-Check
-        run: mvn dependency-check:check
+     # - name: Run OWASP Dependency-Check
+      #  run: mvn dependency-check:check
+      #  with:
+      #    project: 'Meu Projeto'
+      #    path: '.'
+      #    format: 'HTML'
+      #    out: 'reports'
+      #    # Aqui dizemos à ferramenta para ler/escrever na pasta que colocamos no cache:
+      #    args: --data ${{ github.workspace }}/nvd-db
+
+      - name: Run Dependency-Check
+        uses: dependency-check/DependencyCheck_action@main
+        with:
+          project: 'Meu Projeto'
+          path: '.'
+          format: 'HTML'
+          out: 'reports'
+          # Aqui dizemos à ferramenta para ler/escrever na pasta que colocamos no cache:
+          args: --data ${{ github.workspace }}/nvd-db
 
       # 6. Upload do Relatório de Vulnerabilidades (Opcional, para consulta)
       - name: Upload Dependency-Check Report

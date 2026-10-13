@@ -14,7 +14,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                checkout scm
+                git clone --single-branch --branch main https://github.com/danielkrokovsky/teste_cicd.git
             }
         }
 

@@ -26,7 +26,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0 # Necessário para análises de código precisas (ex: SonarQube)
-
+          
       # 2. Configuração do Java (JDK 17 ou 21, conforme seu projeto)
       - name: Set up JDK 21
         uses: actions/setup-java@v4
@@ -34,6 +34,10 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
           cache: 'maven'
+
+      - name: Configurar Variavel JAVA_HOME
+        run: |
+          echo "JAVA_HOME=${JAVA_HOME_21_X64:-$JAVA_HOME_21}" >> $GITHUB_ENV
 
       # 3. Build e Testes com Maven
       - name: Build and Test with Maven

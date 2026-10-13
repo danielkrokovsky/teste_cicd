@@ -1,66 +1,56 @@
 pipeline {
     agent any
 
-    // Ferramentas configuradas globalmente no Jenkins (Global Tool Configuration)
     tools {
-        maven 'Maven 3.9.x' // Substitua pelo nome exato configurado no seu Jenkins
-        jdk 'JDK 17'        // Substitua pela versão do JDK configurada no seu Jenkins
+        maven 'Maven 3.9.x'
+        jdk 'JDK 17'
     }
 
-    // Variáveis de ambiente úteis
     environment {
-        SCANNER_HOME = tool 'SonarQubeScanner' // Opcional: para análise estática
+        JAVA_HOME = tool 'JDK 17'
+        PATH = "$JAVA_HOME/bin:$PATH"
     }
 
     stages {
         stage('Checkout') {
             steps {
-                // Faz o checkout do código fonte do repositório Git
                 checkout scm
             }
         }
 
-        stage('Build & Unit Tests') {
+        stage('Build') {
             steps {
-                // Executa o empacotamento Maven ignorando testes se necessário, ou rodando tudo
-                sh 'mvn clean package'
+                sh 'mvn -B clean package'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                sh 'mvn -B test'
             }
             post {
-                success {
-                    // Publica os resultados dos testes unitários (JUnit) no Jenkins
+                always {
                     junit '**/target/surefire-reports/*.xml'
                 }
             }
         }
 
-        stage('Integration Tests') {
+        stage('Archive artifacts') {
             steps {
-                // Executa testes de integração (caso o projeto possua o plugin maven-failsafe-plugin)
-                sh 'mvn verify'
-            }
-            post {
-                success {
-                    // Publica os resultados dos testes de integração
-                    junit '**/target/failsafe-reports/*.xml'
-                }
-            }
-        }
-
-        /* 
-        stage('SonarQube Analysis') {
-            steps {
-                // Etapa opcional para análise de qualidade de código
-                withSonarQubeEnv('MeuServidorSonar') {
-                    sh "mvn sonar:sonar"
-                }
-            }
-        }
-        */
-
-        stage('Archive Artifacts') {
-            steps {
-                // Salva o arquivo .jar ou .war gerado no diretório target
                 archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
+            }
+        }
+
+        stage('Docker build') {
+            when {
+                expression { fileExists('Dockerfile') }
+            }
+            steps {
+                script {
+                    def imageName = "${env.JOB_NAME}:${env.BUILD_NUMBER}"
+                    sh "docker build -t ${imageName} ."
+                    echo "Imagem Docker gerada: ${imageName}"
+                }
             }
         }
     }
@@ -70,11 +60,10 @@ pipeline {
             echo 'Pipeline finalizada.'
         }
         success {
-            echo 'Sucesso! Projeto compilado, testado e empacotado com sucesso.'
-            // Aqui você pode adicionar notificações (ex: Slack, Email)
+            echo 'Build e testes concluídos com sucesso.'
         }
         failure {
-            echo 'Falha na pipeline. Verifique os logs acima.'
+            echo 'Pipeline falhou. Verifique os logs.'
         }
     }
 }

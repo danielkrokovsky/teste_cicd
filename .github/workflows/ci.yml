@@ -19,7 +19,7 @@ jobs:
           fetch-depth: 0 # Necessário para análises de código precisas (ex: SonarQube)
 
       # 2. Configuração do Java (JDK 17 ou 21, conforme seu projeto)
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
           java-version: '17'

@@ -1,34 +1,29 @@
 pipeline {
-    agent any
+    agent {
+        dockerfile true
+    }
 
     stages {
         stage('Test') {
             steps {
-                // Executando via container Docker diretamente no passo sh,
-                // garantindo que o workspace e os arquivos fiquem na máquina/diretório correto.
-                docker.image('maven:3.10.0-eclipse-temurin-21-alpine').inside {
-                    sh 'mvn clean install'
-                }
+                sh 'mvn clean install'
             }
         }
 
         stage('Sonar Report') {
             steps {
-                docker.image('maven:3.10.0-eclipse-temurin-21-alpine').inside {
-                    sh 'mvn verify sonar:sonar -Dmaven.test.skip -Dsonar.projectKey=cicd -Dsonar.projectName=\'cicd\' -Dsonar.host.url=${SONAR_PATH} -Dsonar.token=${SONAR_TOKEN}'
-                }
+                sh 'mvn verify sonar:sonar -Dmaven.test.skip -Dsonar.projectKey=cicd -Dsonar.projectName=\'cicd\' -Dsonar.host.url=${SONAR_PATH} -Dsonar.token=${SONAR_TOKEN}'
             }
         }
     }
 
     post {
         always {
-            // Como estamos usando agent any com .inside nos stages,
-            // o post roda nativamente no workspace do nó principal onde os arquivos XML foram salvos.
             script {
+                // Publica os relatórios de testes unitários com segurança
                 junit allowEmptyResults: true, testResults: '**/surefire-reports/*.xml'
 
-                // Usamos o try/catch ou garantimos que o JaCoCo processe mesmo se houver falhas anteriores
+                // Registra a cobertura do JaCoCo tratando eventuais falhas anteriores
                 try {
                     recordCoverage(
                         tools: [[parser: 'JACOCO', pattern: '**/target/site/jacoco/jacoco.xml']],

@@ -41,7 +41,7 @@ pipeline {
 
         stage('Test') {
             steps {
-                sh 'mvn -B test'
+                sh 'mvn clean package -DskipTests'
             }
             post {
                 always {

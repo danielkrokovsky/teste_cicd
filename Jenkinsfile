@@ -8,13 +8,16 @@ pipeline {
     stages {
         stage('Test') {
             steps {
-                sh 'mvn clean -Dmaven.test.skip install'
+                // Removido o -Dmaven.test.skip para que os testes rodem e gerem os relatórios
+                sh 'mvn clean package'
             }
         }
 
         stage('Sonar Report') {
             steps {
-                sh 'mvn clean verify sonar:sonar -Dmaven.test.skip -Dsonar.projectKey=cicd -Dsonar.projectName=\'cicd\' -Dsonar.host.url=${SONAR_PATH} -Dsonar.token=${SONAR_TOKEN}'
+                // Aqui o maven.test.skip faz sentido para não rodar os testes de novo apenas para o Sonar,
+                // já que eles rodaram no stage anterior. Os relatórios já estarão salvos.
+                sh 'mvn verify sonar:sonar -Dmaven.test.skip -Dsonar.projectKey=cicd -Dsonar.projectName=\'cicd\' -Dsonar.host.url=${SONAR_PATH} -Dsonar.token=${SONAR_TOKEN}'
             }
         }
     }

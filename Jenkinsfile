@@ -8,15 +8,13 @@ pipeline {
     stages {
         stage('Test') {
             steps {
-                // Removido o -Dmaven.test.skip para que os testes rodem e gerem os relatórios
                 sh 'mvn clean package'
             }
         }
 
         stage('Sonar Report') {
             steps {
-                // Aqui o maven.test.skip faz sentido para não rodar os testes de novo apenas para o Sonar,
-                // já que eles rodaram no stage anterior. Os relatórios já estarão salvos.
+                // Removido o "clean" para que a pasta target/ com os relatórios não seja apagada
                 sh 'mvn verify sonar:sonar -Dmaven.test.skip -Dsonar.projectKey=cicd -Dsonar.projectName=\'cicd\' -Dsonar.host.url=${SONAR_PATH} -Dsonar.token=${SONAR_TOKEN}'
             }
         }
@@ -25,15 +23,16 @@ pipeline {
     post {
         always {
             script {
-                    // Publica os testes unitários JUnit convencionais
+                node {
+                    // O node fornece o contexto de Launcher necessário para o JUnit e JaCoCo
+                    // E agora os arquivos estarão lá, pois o "mvn clean" foi removido do stage anterior
                     junit '**/target/surefire-reports/*.xml'
 
-                    // Publica a cobertura do JaCoCo
                     recordCoverage(
                         tools: [[parser: 'JACOCO', pattern: '**/target/site/jacoco/jacoco.xml']],
                         sourceCodeRetention: 'LAST_BUILD'
                     )
-
+                }
             }
         }
     }

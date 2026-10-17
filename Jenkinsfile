@@ -2,76 +2,43 @@ pipeline {
     agent any
 
     tools {
-        maven 'Maven 3.9.x'
-        jdk 'JDK 21'
+        maven 'Maven-3.9.x' // Nome do seu Maven configurado no Jenkins
+        jdk 'JDK-21'        // Nome do seu JDK configurado no Jenkins
     }
-
-    environment {
-        JAVA_HOME = tool 'JDK 17'
-        PATH = "$JAVA_HOME/bin:$PATH"
-    }
-
-    agent {
-            docker {
-                image 'maven:3.9.6-eclipse-temurin-17'
-                // Monta o socket do Docker do host para permitir o Testcontainers
-                args '-v /var/run/docker.sock:/var/run/docker.sock -u root'
-            }
-        }
 
     stages {
-
-        stage('Test with Testcontainers') {
-                steps {
-                    // Testcontainers se comunica diretamente com o Docker do host via socket
-                    sh 'mvn clean test'
-                }
-                post {
-                    always {
-                        junit '**/target/surefire-reports/*.xml'
+        stage('Download Project') {
+                    steps {
+                        sh 'git clone -b main https://${GITHUB}@github.com/danielkrokovsky/teste_cicd.git'
                     }
                 }
-            }
-
-        stage('Checkout') {
-            steps {
-                git clone --single-branch --branch main https://github.com/danielkrokovsky/teste_cicd.git
-            }
-        }
-
         stage('Test') {
             steps {
-                sh 'mvn clean package -DskipTests'
-            }
-            post {
-                always {
-                    junit '**/target/surefire-reports/*.xml'
-                }
+                sh 'mvn clean -Dmaven.test.skip package'
             }
         }
-
-        stage('Build') {
+        stage('Sonar Report') {
             steps {
-                sh 'mvn -B clean package -DskipTests'
+                sh 'clean verify sonar:sonar
+                    -Dmaven.test.skip
+                    -Dsonar.projectKey=cicd
+                    -Dsonar.projectName='cicd'
+                    -Dsonar.host.url=${SONAR_PATH}
+                    -Dsonar.token=${SONAR_TOKEN}'
             }
         }
 
-        stage('Archive artifacts') {
-            steps {
-                archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
-            }
-        }
-    }
+        post {
+            always {
+                // Publica os testes unitários JUnit convencionais
+                junit '**/target/surefire-reports/*.xml'
 
-    post {
-        always {
-            echo 'Pipeline finalizada.'
-        }
-        success {
-            echo 'Build e testes concluídos com sucesso.'
-        }
-        failure {
-            echo 'Pipeline falhou. Verifique os logs.'
+                // Publica a cobertura do JaCoCo
+                recordCoverage(
+                    tools: [[parser: 'JACOCO', pattern: '**/target/site/jacoco/jacoco.xml']],
+                    sourceCodeRetention: 'LAST_BUILD'
+                )
+            }
         }
     }
 }

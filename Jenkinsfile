@@ -2,15 +2,8 @@ pipeline {
     agent any
 
     tools {
-        // Nomes exatos configurados em Manage Jenkins > Tools
         jdk 'JDK-21'
-        maven 'Maven-3.9'
-    }
-
-    options {
-        // Limpa o workspace e define tempo limite de execução
-        timeout(time: 30, unit: 'MINUTES')
-        disableConcurrentBuilds()
+        maven 'Maven-3.9' // ou o nome configurado nas suas Tools
     }
 
     stages {
@@ -20,17 +13,33 @@ pipeline {
             }
         }
 
-        stage('Verificar Ambiente') {
+        stage('Build & Testes com JaCoCo') {
             steps {
-                sh 'java -version'
-                sh 'mvn -version'
+                // Compila, executa testes e gera target/site/jacoco/jacoco.xml
+                sh 'mvn clean verify'
             }
         }
 
-        stage('Build & Testes') {
+        stage('SonarQube Analysis') {
             steps {
-                // Executa o ciclo de build do Maven
-                sh 'mvn clean verify -DskipTests'
+                // 'SonarQube' é o nome exato configurado em Manage Jenkins > System
+                withSonarQubeEnv('SonarQube') {
+                    sh '''
+                        mvn sonar:sonar \
+                        -Dsonar.projectKey=meu-projeto-java \
+                        -Dsonar.projectName='Meu Projeto Java' \
+                        -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+                    '''
+                }
+            }
+        }
+
+        stage('Quality Gate') {
+            steps {
+                // Pausa a pipeline até receber o webhook de retorno do SonarQube (timeout 10 min)
+                timeout(time: 10, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
             }
         }
 
@@ -43,16 +52,11 @@ pipeline {
 
     post {
         always {
-            // Publica relatórios de testes do JUnit no dashboard do Jenkins
+            // Relatório de testes unitários no Jenkins
             junit allowEmptyResults: true, testResults: '**/target/surefire-reports/*.xml'
         }
         success {
-            // Guarda o .jar gerado para download
             archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
-            echo 'Build executado com sucesso!'
-        }
-        failure {
-            echo 'Falha no build ou nos testes automatizados.'
         }
     }
 }

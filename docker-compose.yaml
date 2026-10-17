@@ -18,6 +18,7 @@ services:
   jenkins:
     image: jenkins/jenkins:lts
     container_name: jenkins
+    user: "jenkins:0"
     restart: unless-stopped
     ports:
       - "8080:8080"
@@ -26,7 +27,7 @@ services:
       - JAVA_OPTS=-Djenkins.install.runSetupWizard=true
     volumes:
       - jenkins_home:/var/jenkins_home
-      - /var/run/docker.sock:/var/run/docker.sock # Permite rodar Docker dentro do Jenkins (opcional, mas recomendado)
+      - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - net_ci_cd
 
@@ -73,7 +74,6 @@ services:
       - sonarqube_data:/opt/sonarqube/data
       - sonarqube_extensions:/opt/sonarqube/extensions
       - sonarqube_logs:/opt/sonarqube/logs
-      - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - net_ci_cd
     ulimits:

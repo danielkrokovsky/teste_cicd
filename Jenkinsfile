@@ -3,7 +3,7 @@ pipeline {
 
     tools {
         maven 'Maven 3.9.x'
-        jdk 'JDK 17'
+        jdk 'JDK 21'
     }
 
     environment {
@@ -11,16 +11,31 @@ pipeline {
         PATH = "$JAVA_HOME/bin:$PATH"
     }
 
-    stages {
-        stage('Checkout') {
-            steps {
-                git clone --single-branch --branch main https://github.com/danielkrokovsky/teste_cicd.git
+    agent {
+            docker {
+                image 'maven:3.9.6-eclipse-temurin-17'
+                // Monta o socket do Docker do host para permitir o Testcontainers
+                args '-v /var/run/docker.sock:/var/run/docker.sock -u root'
             }
         }
 
-        stage('Build') {
+    stages {
+
+        stage('Test with Testcontainers') {
+                steps {
+                    // Testcontainers se comunica diretamente com o Docker do host via socket
+                    sh 'mvn clean test'
+                }
+                post {
+                    always {
+                        junit '**/target/surefire-reports/*.xml'
+                    }
+                }
+            }
+
+        stage('Checkout') {
             steps {
-                sh 'mvn -B clean package'
+                git clone --single-branch --branch main https://github.com/danielkrokovsky/teste_cicd.git
             }
         }
 
@@ -35,22 +50,15 @@ pipeline {
             }
         }
 
-        stage('Archive artifacts') {
+        stage('Build') {
             steps {
-                archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
+                sh 'mvn -B clean package'
             }
         }
 
-        stage('Docker build') {
-            when {
-                expression { fileExists('Dockerfile') }
-            }
+        stage('Archive artifacts') {
             steps {
-                script {
-                    def imageName = "${env.JOB_NAME}:${env.BUILD_NUMBER}"
-                    sh "docker build -t ${imageName} ."
-                    echo "Imagem Docker gerada: ${imageName}"
-                }
+                archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
             }
         }
     }

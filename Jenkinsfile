@@ -4,7 +4,6 @@ pipeline {
     tools {
         // Nomes exatos configurados em Manage Jenkins > Tools
         jdk 'JDK-21'
-        maven 'maven'
     }
 
     options {

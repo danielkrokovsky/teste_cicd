@@ -22,15 +22,13 @@ pipeline {
     post {
         always {
             script {
-                node {
-                    // Busca por surefire-reports em qualquer subnível do projeto e evita crash se não achar
-                    junit allowEmptyResults: true, testResults: '**/surefire-reports/*.xml'
+                // Executa diretamente no workspace do agent Docker atual (sem abrir um novo node/container separado)
+                junit allowEmptyResults: true, testResults: '**/surefire-reports/*.xml'
 
-                    recordCoverage(
-                        tools: [[parser: 'JACOCO', pattern: '**/target/site/jacoco/jacoco.xml']],
-                        sourceCodeRetention: 'LAST_BUILD'
-                    )
-                }
+                recordCoverage(
+                    tools: [[parser: 'JACOCO', pattern: '**/target/site/jacoco/jacoco.xml']],
+                    sourceCodeRetention: 'LAST_BUILD'
+                )
             }
         }
     }

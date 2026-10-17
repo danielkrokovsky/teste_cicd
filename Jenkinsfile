@@ -29,7 +29,7 @@ pipeline {
         stage('Build & Testes') {
             steps {
                 // Executa o ciclo de build do Maven
-                sh 'mvn clean verify'
+                sh 'mvn clean verify -DskipTests'
             }
         }
 

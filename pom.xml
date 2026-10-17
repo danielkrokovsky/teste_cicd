@@ -175,8 +175,9 @@
 		<plugin>
             <groupId>org.sonarsource.scanner.maven</groupId>
             <artifactId>sonar-maven-plugin</artifactId>
-            <version>5.0.0.4389</version>
-        </plugin>
+			<version>5.8.0.7211</version>
+			<scope>compile</scope>
+		</plugin>
 <!--			<plugin>-->
 <!--				<groupId>org.owasp</groupId>-->
 <!--				<artifactId>dependency-check-maven</artifactId>-->

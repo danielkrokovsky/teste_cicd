@@ -21,14 +21,18 @@ pipeline {
 
     post {
         always {
-            // Publica os testes unitários JUnit convencionais
-            junit '**/target/surefire-reports/*.xml'
+            script {
+                node {
+                    // Publica os testes unitários JUnit convencionais
+                    junit '**/target/surefire-reports/*.xml'
 
-            // Publica a cobertura do JaCoCo
-            recordCoverage(
-                tools: [[parser: 'JACOCO', pattern: '**/target/site/jacoco/jacoco.xml']],
-                sourceCodeRetention: 'LAST_BUILD'
-            )
+                    // Publica a cobertura do JaCoCo
+                    recordCoverage(
+                        tools: [[parser: 'JACOCO', pattern: '**/target/site/jacoco/jacoco.xml']],
+                        sourceCodeRetention: 'LAST_BUILD'
+                    )
+                }
+            }
         }
     }
 }

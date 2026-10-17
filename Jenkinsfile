@@ -2,76 +2,57 @@ pipeline {
     agent any
 
     tools {
-        maven 'Maven 3.9.x'
-        jdk 'JDK 21'
+        // Nomes exatos configurados em Manage Jenkins > Tools
+        jdk 'JDK-21'
+        maven 'Maven-3.9'
     }
 
-    environment {
-        JAVA_HOME = tool 'JDK 17'
-        PATH = "$JAVA_HOME/bin:$PATH"
+    options {
+        // Limpa o workspace e define tempo limite de execução
+        timeout(time: 30, unit: 'MINUTES')
+        disableConcurrentBuilds()
     }
-
-    agent {
-            docker {
-                image 'maven:3.9.6-eclipse-temurin-17'
-                // Monta o socket do Docker do host para permitir o Testcontainers
-                args '-v /var/run/docker.sock:/var/run/docker.sock -u root'
-            }
-        }
 
     stages {
-
-        stage('Test with Testcontainers') {
-                steps {
-                    // Testcontainers se comunica diretamente com o Docker do host via socket
-                    sh 'mvn clean test'
-                }
-                post {
-                    always {
-                        junit '**/target/surefire-reports/*.xml'
-                    }
-                }
-            }
-
         stage('Checkout') {
             steps {
-                git clone --single-branch --branch main https://github.com/danielkrokovsky/teste_cicd.git
+                checkout scm
             }
         }
 
-        stage('Test') {
+        stage('Verificar Ambiente') {
             steps {
-                sh 'mvn clean package -DskipTests'
-            }
-            post {
-                always {
-                    junit '**/target/surefire-reports/*.xml'
-                }
+                sh 'java -version'
+                sh 'mvn -version'
             }
         }
 
-        stage('Build') {
+        stage('Build & Testes') {
             steps {
-                sh 'mvn -B clean package -DskipTests'
+                // Executa o ciclo de build do Maven
+                sh 'mvn clean verify'
             }
         }
 
-        stage('Archive artifacts') {
+        stage('Empacotamento') {
             steps {
-                archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
+                sh 'mvn package -DskipTests'
             }
         }
     }
 
     post {
         always {
-            echo 'Pipeline finalizada.'
+            // Publica relatórios de testes do JUnit no dashboard do Jenkins
+            junit allowEmptyResults: true, testResults: '**/target/surefire-reports/*.xml'
         }
         success {
-            echo 'Build e testes concluídos com sucesso.'
+            // Guarda o .jar gerado para download
+            archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
+            echo 'Build executado com sucesso!'
         }
         failure {
-            echo 'Pipeline falhou. Verifique os logs.'
+            echo 'Falha no build ou nos testes automatizados.'
         }
     }
 }

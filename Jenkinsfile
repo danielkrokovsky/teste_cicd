@@ -25,7 +25,6 @@ pipeline {
     post {
         always {
             script {
-                node {
                     // Publica os testes unitários JUnit convencionais
                     junit '**/target/surefire-reports/*.xml'
 
@@ -34,7 +33,7 @@ pipeline {
                         tools: [[parser: 'JACOCO', pattern: '**/target/site/jacoco/jacoco.xml']],
                         sourceCodeRetention: 'LAST_BUILD'
                     )
-                }
+
             }
         }
     }

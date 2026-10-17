@@ -7,6 +7,12 @@ pipeline {
     }
 
     stages {
+        stage('Docker CLI Check') {
+            steps {
+                sh 'docker --version'
+                sh 'docker ps'
+            }
+        }
 
         stage('Run Permissions') {
             steps {

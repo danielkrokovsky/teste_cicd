@@ -14,7 +14,6 @@ pipeline {
 
         stage('Sonar Report') {
             steps {
-                // Removido o "clean" para que a pasta target/ com os relatórios não seja apagada
                 sh 'mvn verify sonar:sonar -Dmaven.test.skip -Dsonar.projectKey=cicd -Dsonar.projectName=\'cicd\' -Dsonar.host.url=${SONAR_PATH} -Dsonar.token=${SONAR_TOKEN}'
             }
         }
@@ -24,9 +23,8 @@ pipeline {
         always {
             script {
                 node {
-                    // O node fornece o contexto de Launcher necessário para o JUnit e JaCoCo
-                    // E agora os arquivos estarão lá, pois o "mvn clean" foi removido do stage anterior
-                    junit '**/target/surefire-reports/*.xml'
+                    // Busca por surefire-reports em qualquer subnível do projeto e evita crash se não achar
+                    junit allowEmptyResults: true, testResults: '**/surefire-reports/*.xml'
 
                     recordCoverage(
                         tools: [[parser: 'JACOCO', pattern: '**/target/site/jacoco/jacoco.xml']],

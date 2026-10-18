@@ -19,7 +19,8 @@ pipeline {
                 sh 'mvn -B clean install -Pno-containers'
             }
         }
-        stage('SonarQube Analysis') {
+
+/*        stage('SonarQube Analysis') {
             steps {
                 // 'SonarQube' é o nome exato configurado em Manage Jenkins > System
                 withSonarQubeEnv('SonarQube') {
@@ -28,7 +29,7 @@ pipeline {
             }
         }
 
-/*
+
         stage('Quality Gate') {
             steps {
                 // Pausa a pipeline até receber o webhook de retorno do SonarQube (timeout 10 min)

@@ -23,13 +23,7 @@ pipeline {
             steps {
                 // 'SonarQube' é o nome exato configurado em Manage Jenkins > System
                 withSonarQubeEnv('SonarQube') {
-                    sh '''
-                        mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
-                          -Dsonar.projectKey=cicd \
-                          -Dsonar.projectName='cicd' \
-                          -Dsonar.host.url=http://sonarqube:9000 \
-                          -Dsonar.token=sqp_aa0f8dbd7b43711883eaccb262de088b3b0e1d71
-                    '''
+                    sh 'mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=cicd -Dsonar.projectName='cicd' -Dsonar.host.url=http://sonarqube:9000 -Dsonar.token=sqp_aa0f8dbd7b43711883eaccb262de088b3b0e1d71'
                 }
             }
         }

@@ -38,15 +38,15 @@ stages {
 */
 
     stage('Snyk Test') {
-               steps {
-                   script {
-                       // Run Snyk test
-                       withCredentials([string(credentialsId: ${SNYK_TOKEN}, variable: 'SNYK_TOKEN')]) {
-                           sh 'snyk test --token=${SNYK_TOKEN}'
-                       }
-                   }
+       steps {
+           script {
+               // Run Snyk test
+               withCredentials([string(credentialsId: ${SNYK_TOKEN}, variable: 'SNYK_TOKEN')]) {
+                   sh 'snyk test --token=${SNYK_TOKEN}'
                }
            }
+       }
+   }
 
     stage('Quality Gate') {
         steps {

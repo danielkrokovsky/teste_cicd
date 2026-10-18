@@ -178,30 +178,30 @@
 				<artifactId>sonar-maven-plugin</artifactId>
 				<version>5.0.0.4389</version>
 			</plugin>
-<!--			<plugin>-->
-<!--				<groupId>org.owasp</groupId>-->
-<!--				<artifactId>dependency-check-maven</artifactId>-->
-<!--				<version>12.1.3</version>-->
-<!--				<configuration>-->
-<!--					<nvdApiKey>B35D4086-2AEC-482C-B6BE-D3DE6CC3D206</nvdApiKey>-->
-<!--					<failBuildOnCVSS>31</failBuildOnCVSS>-->
-<!--					<formats>-->
-<!--						<format>HTML</format>-->
-<!--					</formats>-->
-<!--					<centralAnalyzerEnabled>false</centralAnalyzerEnabled>-->
-<!--					<suppressionFiles>-->
-<!--						<suppressionFile>${project.basedir}/config/owasp-suppressions.xml</suppressionFile>-->
-<!--					</suppressionFiles>-->
-<!--				</configuration>-->
-<!--				<executions>-->
-<!--					<execution>-->
-<!--						<phase>verify</phase>-->
-<!--						<goals>-->
-<!--							<goal>aggregate</goal>-->
-<!--						</goals>-->
-<!--					</execution>-->
-<!--				</executions>-->
-<!--			</plugin>-->
+			<plugin>
+				<groupId>org.owasp</groupId>
+				<artifactId>dependency-check-maven</artifactId>
+				<version>12.1.3</version>
+				<configuration>
+					<nvdApiKey>B35D4086-2AEC-482C-B6BE-D3DE6CC3D206</nvdApiKey>
+					<failBuildOnCVSS>31</failBuildOnCVSS>
+					<formats>
+						<format>HTML</format>
+					</formats>
+					<centralAnalyzerEnabled>false</centralAnalyzerEnabled>
+					<suppressionFiles>
+						<suppressionFile>${project.basedir}/config/owasp-suppressions.xml</suppressionFile>
+					</suppressionFiles>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>verify</phase>
+						<goals>
+							<goal>aggregate</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 

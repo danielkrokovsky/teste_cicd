@@ -16,11 +16,11 @@ pipeline {
         stage('Build') {
             steps {
                 // Compila, executa testes e gera target/site/jacoco/jacoco.xml
-                sh 'mvn -B clean install -Pno-containers'
+              sh 'mvn -B clean test jacoco:report -Pno-containers'
             }
         }
 
-/*        stage('SonarQube Analysis') {
+       stage('SonarQube Analysis') {
             steps {
                 // 'SonarQube' é o nome exato configurado em Manage Jenkins > System
                 withSonarQubeEnv('SonarQube') {
@@ -30,7 +30,7 @@ pipeline {
         }
 
 
-        stage('Quality Gate') {
+/*         stage('Quality Gate') {
             steps {
                 // Pausa a pipeline até receber o webhook de retorno do SonarQube (timeout 10 min)
                 timeout(time: 10, unit: 'MINUTES') {

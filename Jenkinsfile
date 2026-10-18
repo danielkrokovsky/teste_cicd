@@ -29,21 +29,19 @@ pipeline {
             }
         }
 
-
-/*         stage('Quality Gate') {
-            steps {
-                // Pausa a pipeline até receber o webhook de retorno do SonarQube (timeout 10 min)
-                timeout(time: 10, unit: 'MINUTES') {
-                    waitForQualityGate abortPipeline: true
-                }
+     stage('Quality Gate') {
+        steps {
+            // Pausa a pipeline até receber o webhook de retorno do SonarQube (timeout 10 min)
+            timeout(time: 10, unit: 'MINUTES') {
+                waitForQualityGate abortPipeline: true
             }
         }
- */
+    }
 
-        stage('Empacotamento') {
-            steps {
-                sh 'mvn package -DskipTests'
-            }
+
+    stage('Empacotamento') {
+        steps {
+            sh 'mvn package -DskipTests'
         }
     }
 

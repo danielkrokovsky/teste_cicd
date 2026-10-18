@@ -7,20 +7,6 @@ pipeline {
     }
 
     stages {
-        stage('Docker CLI Check') {
-            steps {
-                sh 'docker --version'
-                sh 'docker ps'
-            }
-        }
-
-        stage('Run Permissions') {
-            steps {
-                // Compila, executa testes e gera target/site/jacoco/jacoco.xml
-                sh 'docker exec -u jenkins -it jenkins docker ps'
-            }
-        }
-
         stage('Checkout') {
             steps {
                 checkout scm

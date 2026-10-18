@@ -40,8 +40,8 @@ class CadastrarServicoServiceTest {
 
         ServicoResponse response = service.cadastrar(request);
 
-        assertThat(response.descricao()).isEqualTo("Troca de óleo");
-        assertThat(response.valor()).isEqualByComparingTo(new BigDecimal("180.00"));
+        assertThat(response.descricao()).isEqualTo("Troca de oleo");
+        assertThat(response.valor()).isEqualByComparingTo(new BigDecimal("190.00"));
         assertThat(response.id()).isNotNull();
         verify(repository).saveAndFlush(any(Servico.class));
     }

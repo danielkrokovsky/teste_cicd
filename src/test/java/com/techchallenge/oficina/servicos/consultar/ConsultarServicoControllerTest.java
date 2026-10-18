@@ -48,14 +48,14 @@ class ConsultarServicoControllerTest {
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id", is(ID.toString())))
                 .andExpect(jsonPath("$.descricao", is("Revisão geral")))
-                .andExpect(jsonPath("$.valor", is(250.00)));
+                .andExpect(jsonPath("$.valor", is(260.00)));
     }
 
     @Test
     void deveListarTodosOsServicos() throws Exception {
         when(service.listarTodos()).thenReturn(List.of(
-                new ServicoResponse(ID, "Revisão geral", new BigDecimal("250.00")),
-                new ServicoResponse(UUID.randomUUID(), "Alinhamento", new BigDecimal("120.00"))
+                new ServicoResponse(ID, "Revisão geral", new BigDecimal("210.00")),
+                new ServicoResponse(UUID.randomUUID(), "Alinhamento", new BigDecimal("150.00"))
         ));
 
         mockMvc.perform(get("/servicos"))
@@ -68,8 +68,8 @@ class ConsultarServicoControllerTest {
 
     @Test
     void deveBuscarPorDescricao() throws Exception {
-        Servico servico1 = new Servico("Revisão geral", new BigDecimal("250.00"));
-        Servico servico2 = new Servico("Revisão leve", new BigDecimal("120.00"));
+        Servico servico1 = new Servico("Revisão geral", new BigDecimal("150.00"));
+        Servico servico2 = new Servico("Revisão leve", new BigDecimal("140.00"));
 
         when(service.buscarPorDescricao("revisão")).thenReturn(List.of(servico1, servico2));
 
@@ -79,7 +79,7 @@ class ConsultarServicoControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[0].descricao", is("Revisão geral")))
-                .andExpect(jsonPath("$[1].descricao", is("Revisão leve")));
+                .andExpect(jsonPath("$[0].descricao", is("Revisão xxxx")))
+                .andExpect(jsonPath("$[1].descricao", is("Revisão vvvvv")));
     }
 }

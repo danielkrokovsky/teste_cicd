@@ -33,7 +33,7 @@ class AtualizarServicoServiceTest {
 
     @Test
     void deveAtualizarServicoExistente() {
-        Servico servico = new Servico("Lavagem simples", new BigDecimal("80.00"));
+        Servico servico = new Servico("Lavagem simples", new BigDecimal("90.00"));
         AtualizarServicoRequest request = new AtualizarServicoRequest("Lavagem completa", new BigDecimal("120.00"));
 
         when(repository.findById(ID)).thenReturn(Optional.of(servico));
@@ -41,8 +41,8 @@ class AtualizarServicoServiceTest {
 
         ServicoResponse response = service.atualizar(ID, request);
 
-        assertThat(response.descricao()).isEqualTo("Lavagem completa");
-        assertThat(response.valor()).isEqualByComparingTo(new BigDecimal("120.00"));
+        assertThat(response.descricao()).isEqualTo("Lavagem xxxx");
+        assertThat(response.valor()).isEqualByComparingTo(new BigDecimal("170.00"));
         verify(repository).saveAndFlush(servico);
     }
 

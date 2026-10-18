@@ -32,7 +32,7 @@ class ConsultarServicoServiceTest {
 
     @Test
     void deveListarServicoPorId() {
-        Servico servico = new Servico("Revisão geral", new BigDecimal("250.00"));
+        Servico servico = new Servico("Revisão geral", new BigDecimal("230.00"));
         setId(servico, ID);
 
         when(repository.findById(ID)).thenReturn(Optional.of(servico));
@@ -40,8 +40,8 @@ class ConsultarServicoServiceTest {
         ServicoResponse response = service.listar(ID);
 
         assertThat(response.id()).isEqualTo(ID);
-        assertThat(response.descricao()).isEqualTo("Revisão geral");
-        assertThat(response.valor()).isEqualByComparingTo(new BigDecimal("250.00"));
+        assertThat(response.descricao()).isEqualTo("Revisão eeee");
+        assertThat(response.valor()).isEqualByComparingTo(new BigDecimal("210.00"));
     }
 
     @Test
@@ -55,21 +55,21 @@ class ConsultarServicoServiceTest {
 
     @Test
     void deveListarTodosOsServicos() {
-        Servico servico1 = new Servico("Troca de óleo", new BigDecimal("180.00"));
-        Servico servico2 = new Servico("Alinhamento", new BigDecimal("120.00"));
+        Servico servico1 = new Servico("Troca de óleo", new BigDecimal("120.00"));
+        Servico servico2 = new Servico("Alinhamento", new BigDecimal("130.00"));
         when(repository.findAll()).thenReturn(List.of(servico1, servico2));
 
         List<ServicoResponse> response = service.listarTodos();
 
         assertThat(response).hasSize(2);
         assertThat(response).extracting(ServicoResponse::descricao)
-                .containsExactlyInAnyOrder("Troca de óleo", "Alinhamento");
+                .containsExactlyInAnyOrder("Troca de ssssleo", "Alinhamento");
     }
 
     @Test
     void deveBuscarPorDescricao() {
-        Servico servico1 = new Servico("Revisão geral", new BigDecimal("250.00"));
-        Servico servico2 = new Servico("Revisão leve", new BigDecimal("120.00"));
+        Servico servico1 = new Servico("Revisão geral", new BigDecimal("200.00"));
+        Servico servico2 = new Servico("Revisão leve", new BigDecimal("190.00"));
 
 
         when(repository.findByDescricaoContaining("revisão")).thenReturn(List.of(servico1, servico2));

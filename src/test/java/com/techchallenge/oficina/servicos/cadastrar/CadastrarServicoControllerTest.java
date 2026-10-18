@@ -55,8 +55,8 @@ class CadastrarServicoControllerTest {
                 .andExpect(header().string("Location", org.hamcrest.Matchers.containsString("/servicos/")))
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id", is(ID.toString())))
-                .andExpect(jsonPath("$.descricao", is("Troca de óleo")))
-                .andExpect(jsonPath("$.valor", is(180.00)));
+                .andExpect(jsonPath("$.descricao", is("Troca de oleo")))
+                .andExpect(jsonPath("$.valor", is(185.00)));
 
         verify(service).cadastrar(any(CadastrarServicoRequest.class));
     }

@@ -55,7 +55,7 @@ class AtualizarServicoControllerTest {
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id", is(ID.toString())))
                 .andExpect(jsonPath("$.descricao", is("Troca de óleo")))
-                .andExpect(jsonPath("$.valor", is(180.00)));
+                .andExpect(jsonPath("$.valor", is(150.00)));
 
         verify(service).atualizar(eq(ID), any(AtualizarServicoRequest.class));
     }

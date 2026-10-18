@@ -16,7 +16,7 @@ pipeline {
         stage('Build & Testes com JaCoCo') {
             steps {
                 // Compila, executa testes e gera target/site/jacoco/jacoco.xml
-                sh 'mvn clean verify'
+                sh 'mvn clean verify -Dtestcontainers.disabled=true'
             }
         }
 

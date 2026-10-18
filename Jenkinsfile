@@ -19,7 +19,6 @@ pipeline {
                 sh 'mvn -B clean test jacoco:report -Pno-containers'
             }
         }
-
         stage('SonarQube Analysis') {
             steps {
                 // 'SonarQube' é o nome exato configurado em Manage Jenkins > System

@@ -24,8 +24,14 @@ stages {
         steps {
             // 'SonarQube' é o nome exato configurado em Manage Jenkins > System
             withSonarQubeEnv('SonarQube') {
-                sh 'mvn clean verify -DskipTests org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=cicd -Dsonar.projectName=cicd -Dsonar.host.url=http://sonarqube:9000 -Dsonar.token=sqp_aa0f8dbd7b43711883eaccb262de088b3b0e1d71'
+                sh 'mvn -DskipTests org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=cicd -Dsonar.projectName=cicd -Dsonar.host.url=http://sonarqube:9000 -Dsonar.token=sqp_aa0f8dbd7b43711883eaccb262de088b3b0e1d71'
             }
+        }
+    }
+
+    stage('Dependency Check') {
+        steps {
+            sh 'mvn dependency-check:check'
         }
     }
 
@@ -38,8 +44,7 @@ stages {
         }
     }
 
-
-    stage('Empacotamento') {
+    stage('Package') {
         steps {
             sh 'mvn package -DskipTests'
         }

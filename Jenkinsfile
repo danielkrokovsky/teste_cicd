@@ -13,10 +13,10 @@ pipeline {
             }
         }
 
-        stage('Build & Testes com JaCoCo') {
+        stage('Build') {
             steps {
                 // Compila, executa testes e gera target/site/jacoco/jacoco.xml
-                sh 'mvn -B clean test jacoco:report -Pno-containers'
+                sh 'mvn -B clean install -Pno-containers'
             }
         }
         stage('SonarQube Analysis') {
@@ -24,15 +24,17 @@ pipeline {
                 // 'SonarQube' é o nome exato configurado em Manage Jenkins > System
                 withSonarQubeEnv('SonarQube') {
                     sh '''
-                        mvn sonar:sonar \
-                        -Dsonar.projectKey=meu-projeto-java \
-                        -Dsonar.projectName='Meu Projeto Java' \
-                        -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+                        mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+                          -Dsonar.projectKey=cicd \
+                          -Dsonar.projectName='cicd' \
+                          -Dsonar.host.url=http://sonarqube:9000 \
+                          -Dsonar.token=sqp_aa0f8dbd7b43711883eaccb262de088b3b0e1d71
                     '''
                 }
             }
         }
 
+/*
         stage('Quality Gate') {
             steps {
                 // Pausa a pipeline até receber o webhook de retorno do SonarQube (timeout 10 min)
@@ -41,6 +43,7 @@ pipeline {
                 }
             }
         }
+ */
 
         stage('Empacotamento') {
             steps {

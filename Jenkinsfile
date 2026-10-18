@@ -35,7 +35,7 @@ stages {
             sh 'mvn dependency-check:check'
         }
     }
-*/
+
 
     stage('Snyk Test') {
        steps {
@@ -46,7 +46,7 @@ stages {
                }
            }
        }
-   }
+   }*/
 
     stage('Quality Gate') {
         steps {

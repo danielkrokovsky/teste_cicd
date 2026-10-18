@@ -14,18 +14,17 @@ stages {
     }
 
     stage('Build') {
-        catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-            // Este comando vai falhar
-            sh 'mvn -B clean test jacoco:report -Pno-containers'
+        steps {
+            // Compila, executa testes e gera target/site/jacoco/jacoco.xml
+          sh 'mvn -B clean test jacoco:report -Pno-containers'
         }
     }
 
    stage('SonarQube Analysis') {
         steps {
-            catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                withSonarQubeEnv('SonarQube') {
-                    sh 'mvn -DskipTests org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=cicd -Dsonar.projectName=cicd -Dsonar.host.url=http://sonarqube:9000 -Dsonar.token=sqp_aa0f8dbd7b43711883eaccb262de088b3b0e1d71'
-                }
+            // 'SonarQube' é o nome exato configurado em Manage Jenkins > System
+            withSonarQubeEnv('SonarQube') {
+                sh 'mvn -DskipTests org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=cicd -Dsonar.projectName=cicd -Dsonar.host.url=http://sonarqube:9000 -Dsonar.token=sqp_aa0f8dbd7b43711883eaccb262de088b3b0e1d71'
             }
         }
     }
@@ -51,19 +50,16 @@ stages {
 
     stage('Quality Gate') {
         steps {
-            catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                timeout(time: 10, unit: 'MINUTES') {
-                    waitForQualityGate abortPipeline: true
-                }
+            // Pausa a pipeline até receber o webhook de retorno do SonarQube (timeout 10 min)
+            timeout(time: 10, unit: 'MINUTES') {
+                waitForQualityGate abortPipeline: true
             }
         }
     }
 
     stage('Package') {
         steps {
-            catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                sh 'mvn package -DskipTests'
-            }
+            sh 'mvn package -DskipTests'
         }
     }
 }

@@ -16,7 +16,7 @@ pipeline {
         stage('Build & Testes com JaCoCo') {
             steps {
                 // Compila, executa testes e gera target/site/jacoco/jacoco.xml
-                sh 'mvn clean test -Pno-containers'
+                sh 'mvn -B clean test jacoco:report -Pno-containers'
             }
         }
 

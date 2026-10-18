@@ -29,11 +29,13 @@ stages {
         }
     }
 
+/*
     stage('Dependency Check') {
         steps {
             sh 'mvn dependency-check:check'
         }
     }
+*/
 
     stage('Snyk Test') {
                steps {

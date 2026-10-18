@@ -41,7 +41,7 @@ stages {
        steps {
            script {
                // Run Snyk test
-               withCredentials([string(credentialsId: ${SNYK_TOKEN}, variable: 'SNYK_TOKEN')]) {
+               withCredentials([string(credentialsId: ${SNYK_TOKEN}, variable: 'Snyk')]) {
                    sh 'snyk test --token=${SNYK_TOKEN}'
                }
            }

@@ -47,6 +47,7 @@ jobs:
                       timeout(time: 1, unit: 'HOURS')
                   }
                   stages {
+                      echo 'Rodando a partir do arquivo Jenkins.yaml'
                       stage('Checkout') {
                           steps {
                               // Se for usar Git, descomente e substitua pela sua URL/branch:
@@ -73,7 +74,7 @@ jobs:
                           steps {
                               withSonarQubeEnv('SonarQube') {
                             sh '''
-                               mvn -f oficina/pom.xml clean verify sonar:sonar \
+                               mvn -f oficina/pom.xml verify sonar:sonar \
                                  -Dsonar.projectKey=spring-boot-app \
                                  -Dsonar.host.url=http://sonarqube:9000 \
                                  -Dsonar.token=${JENKINS_TOKEN}\

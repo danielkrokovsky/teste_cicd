@@ -41,7 +41,7 @@ pipeline {
                            mvn -f oficina/pom.xml verify sonar:sonar \
                              -Dsonar.projectKey=spring-boot-app \
                              -Dsonar.host.url=http://sonarqube:9000 \
-                             -Dsonar.token=sqp_cac03f052b5eab9a6ed52b97d99bafd356fa6249\
+                             -Dsonar.token=${JENKINS_TOKEN}\
                              -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
                     '''
                 }
@@ -52,7 +52,7 @@ pipeline {
             steps {
                 timeout(time: 2, unit: 'MINUTES') {
                     // Aguarda o resultado da análise de qualidade do SonarQube
-                    waitForQualityGate(abortPipeline: false, webhookSecretId: 'sqp_daf8bf1d3a6c77392e3793e40495516769fb00ab')
+                    waitForQualityGate(abortPipeline: false, webhookSecretId: '${JENKINS_TOKEN}')
                 }
             }
         }

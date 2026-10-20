@@ -76,7 +76,7 @@ jobs:
                                mvn -f oficina/pom.xml clean verify sonar:sonar \
                                  -Dsonar.projectKey=spring-boot-app \
                                  -Dsonar.host.url=http://sonarqube:9000 \
-                                 -Dsonar.token=sqp_cac03f052b5eab9a6ed52b97d99bafd356fa6249\
+                                 -Dsonar.token=${JENKINS_TOKEN}\
                                  -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
                             '''
                               }

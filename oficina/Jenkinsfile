@@ -4,7 +4,7 @@ pipeline {
     // Utiliza as ferramentas configuradas anteriormente no JCasC
     tools {
         jdk 'JDK-21'
-        maven 'Maven-System'
+        maven 'Maven'
     }
 
     environment {

@@ -33,7 +33,7 @@ pipeline {
             }
         }
 
-        stage('Sonar_qube') {
+        stage('SonarQube Analysis') {
             steps {
                 echo 'Enviando métricas para o SonarQube...'
                  withSonarQubeEnv('Sonar_qube') {
@@ -48,7 +48,7 @@ pipeline {
             }
         }
 
-        stage('Quality Gate') {
+        stage('Send Analysis to SonarQube') {
             steps {
                 timeout(time: 2, unit: 'MINUTES') {
                     // Aguarda o resultado da análise de qualidade do SonarQube

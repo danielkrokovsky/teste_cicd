@@ -1,0 +1,25 @@
+FROM jenkins/jenkins:lts-jdk17
+
+USER root
+
+# Instala JDK 21 e Maven no sistema
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+      openjdk-21-jdk \
+      maven && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Volta para o usuário padrão do Jenkins
+USER jenkins
+
+# Desativa o wizard inicial de configuração
+ENV JAVA_OPTS="-Djenkins.install.runSetupWizard=false"
+ENV CASC_JENKINS_CONFIG="/var/jenkins_home/jenkins.yaml"
+
+# Instala plugins declarados no arquivo
+COPY plugins.txt /usr/share/jenkins/ref/plugins.txt
+RUN jenkins-plugin-cli -f /usr/share/jenkins/ref/plugins.txt
+
+# Copia arquivo de configuração automática
+COPY jenkins.yaml /var/jenkins_home/jenkins.yaml

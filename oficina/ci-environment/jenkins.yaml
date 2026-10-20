@@ -1,0 +1,93 @@
+jenkins:
+  securityRealm:
+    local:
+      allowsSignup: false
+      users:
+        - id: "admin"
+          password: "adminpassword"
+  authorizationStrategy:
+    loggedInUsersCanDoAnything:
+      allowAnonymousRead: false
+  systemMessage: "Jenkins configurado automaticamente via JCasC com integração SonarQube, JDK 21 e Maven."
+
+unclassified:
+  location:
+    url: "http://localhost:8080/"
+  sonarGlobalConfiguration:
+    buildWrapperEnabled: true
+    installations:
+      - name: "SonarQube-Local"
+        serverUrl: "http://sonarqube:9000"
+
+tool:
+  jdk:
+    installations:
+      - name: "JDK-21"
+        home: "/usr/lib/jvm/java-21-openjdk-amd64"
+  maven:
+    installations:
+      - name: "Maven-System"
+        home: "/usr/share/maven"
+
+jobs:
+  - script: >
+      pipelineJob('spring-boot-app') {
+        definition {
+          cps {
+            sandbox()
+            script('''
+              pipeline {
+                  agent any
+                  tools {
+                      jdk 'JDK-21'
+                      maven 'Maven-System'
+                  }
+                  options {
+                      buildDiscarder(logRotator(numToKeepStr: '5'))
+                      timeout(time: 1, unit: 'HOURS')
+                  }
+                  stages {
+                      stage('Checkout') {
+                          steps {
+                              // Se for usar Git, descomente e substitua pela sua URL/branch:
+                              // git branch: 'main', url: 'https://github.com/usuario/spring-boot-demo.git'
+                              echo 'Código clonado com sucesso.'
+                          }
+                      }
+                      stage('Build & Testes com JaCoCo') {
+                          steps {
+                              sh 'mvn clean verify jacoco:report'
+                          }
+                          post {
+                              always {
+                                  junit testResults: '**/target/surefire-reports/*.xml', allowEmptyResults: true
+                                  jacoco(
+                                      execPattern: '**/target/*.exec',
+                                      classPattern: '**/target/classes',
+                                      sourcePattern: '**/src/main/java'
+                                  )
+                              }
+                          }
+                      }
+                      stage('Análise SonarQube') {
+                          steps {
+                              withSonarQubeEnv('SonarQube-Local') {
+                                  sh """
+                                      mvn sonar:sonar \
+                                        -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+                                  """
+                              }
+                          }
+                      }
+                      stage('Empacotamento Spring Boot') {
+                          steps {
+                              sh 'mvn package -DskipTests'
+                              archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
+                          }
+                      }
+                  }
+              }
+            '''.stripIndent())
+          }
+        }
+      }

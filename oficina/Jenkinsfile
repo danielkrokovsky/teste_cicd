@@ -41,7 +41,7 @@ pipeline {
                         mvn -f oficina/pom.xml org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
                               -Dsonar.projectKey=spring-boot-app \
                               -Dsonar.host.url=http://sonarqube:9000 \
-                              -Dsonar.token=sqp_2979d02d857c64760c6f2bf74342a2ff42be5325
+                              -Dsonar.token=sqp_2979d02d857c64760c6f2bf74342a2ff42be5325 \
                               -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
                     '''
                 }

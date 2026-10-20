@@ -69,9 +69,9 @@ jobs:
                               }
                           }
                       }
-                      stage('SonarQube Local') {
+                      stage('Sonar_qube') {
                           steps {
-                              withSonarQubeEnv('SonarQube-Local') {
+                              withSonarQubeEnv('Sonar_qube') {
                                   sh """
                                       mvn -f oficina/pom.xml org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
                                                                     -Dsonar.projectKey=spring-boot-app \

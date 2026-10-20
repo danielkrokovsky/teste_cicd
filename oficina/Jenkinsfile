@@ -33,10 +33,10 @@ pipeline {
             }
         }
 
-        stage('SonarQube-Local') {
+        stage('Sonar_qube') {
             steps {
                 echo 'Enviando métricas para o SonarQube...'
-                 withSonarQubeEnv('SonarQube') {
+                 withSonarQubeEnv('Sonar_qube') {
                     sh '''
                         mvn -f oficina/pom.xml org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
                               -Dsonar.projectKey=spring-boot-app \

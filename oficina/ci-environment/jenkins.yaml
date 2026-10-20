@@ -73,11 +73,11 @@ jobs:
                           steps {
                               withSonarQubeEnv('SonarQube') {
                             sh '''
-                              mvn -f oficina/pom.xml clean verify sonar:sonar \
-                                -Dsonar.projectKey=spring-boot-app \
-                                -Dsonar.host.url=http://sonarqube:9000 \
-                                -Dsonar.token=sqp_2979d02d857c64760c6f2bf74342a2ff42be5325 \
-                                -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+                               mvn clean verify sonar:sonar \
+                                 -Dsonar.projectKey=spring-boot-app \
+                                 -Dsonar.host.url=http://sonarqube:9000 \
+                                 -Dsonar.token=sqp_cac03f052b5eab9a6ed52b97d99bafd356fa6249\
+                                 -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
                             '''
                               }
                           }

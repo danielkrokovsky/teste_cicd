@@ -38,7 +38,7 @@ pipeline {
                 echo 'Enviando métricas para o SonarQube...'
                 withSonarQubeEnv(env.SONAR_SERVER) {
                     sh '''
-                           mvn clean verify sonar:sonar \
+                           mvn -f oficina/pom.xml verify sonar:sonar \
                              -Dsonar.projectKey=spring-boot-app \
                              -Dsonar.host.url=http://sonarqube:9000 \
                              -Dsonar.token=sqp_cac03f052b5eab9a6ed52b97d99bafd356fa6249\

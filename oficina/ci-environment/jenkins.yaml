@@ -16,7 +16,7 @@ unclassified:
   sonarGlobalConfiguration:
     buildWrapperEnabled: true
     installations:
-      - name: "SonarQube-Local"
+      - name: "SonarQube"
         serverUrl: "http://sonarqube:9000"
 
 tool:
@@ -26,7 +26,7 @@ tool:
         home: "/usr/lib/jvm/java-21-openjdk-amd64"
   maven:
     installations:
-      - name: "Maven-System"
+      - name: "maven"
         home: "/usr/share/maven"
 
 jobs:
@@ -71,14 +71,14 @@ jobs:
                       }
                       stage('Sonar_qube') {
                           steps {
-                              withSonarQubeEnv('Sonar_qube') {
-                                  sh """
-                                      mvn -f oficina/pom.xml org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
-                                                                    -Dsonar.projectKey=spring-boot-app \
-                                                                    -Dsonar.host.url=http://sonarqube:9000 \
-                                                                    -Dsonar.token=sqp_2979d02d857c64760c6f2bf74342a2ff42be5325
-                                                                    -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
-                                  """
+                              withSonarQubeEnv('SonarQube') {
+                            sh '''
+                                    mvn clean verify sonar:sonar \
+                                      -Dsonar.projectKey=spring-boot-app \
+                                      -Dsonar.host.url=http://localhost:9000 \
+                                      -Dsonar.token=sqp_2979d02d857c64760c6f2bf74342a2ff42be5325 \
+                                      -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+                            '''
                               }
                           }
                       }

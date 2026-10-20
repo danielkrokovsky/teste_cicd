@@ -40,7 +40,7 @@ jobs:
                   agent any
                   tools {
                       jdk 'JDK-21'
-                      maven 'Maven-System'
+                      maven 'maven'
                   }
                   options {
                       buildDiscarder(logRotator(numToKeepStr: '5'))

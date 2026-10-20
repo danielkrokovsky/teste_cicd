@@ -9,7 +9,7 @@ pipeline {
 
     environment {
         // Nome da instalação do Sonar declarada no jenkins.yaml
-        SONAR_SERVER = 'SonarQube-Local'
+        SONAR_SERVER = 'SonarQube'
     }
 
     stages {

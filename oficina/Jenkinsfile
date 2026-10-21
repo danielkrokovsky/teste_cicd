@@ -114,7 +114,7 @@ pipeline {
                     withCredentials([string(credentialsId: 'sonar-token-java', variable: 'SONAR_TOKEN')]) {
                         sh '''
                             mvn -f oficina/pom.xml \
-                                org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+                                org.sonarsource.scanner.maven:sonar-maven-plugin:3.11.0.3922:sonar \
                                -Dsonar.projectKey=spring-boot-app \
                                -Dsonar.token=${SONAR_TOKEN} \
                                -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml

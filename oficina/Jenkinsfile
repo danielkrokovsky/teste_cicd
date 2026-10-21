@@ -38,13 +38,7 @@ pipeline {
             steps {
                 echo 'Enviando métricas para o SonarQube...'
                    withCredentials([string(credentialsId: 'sonar-token-java', variable: 'SONAR_TOKEN')]) {
-                    sh '''
-                           mvn -f oficina/pom.xml verify sonar:sonar \
-                             -Dsonar.projectKey=spring-boot-app \
-                             -Dsonar.host.url=http://sonarqube:9000 \
-                             -Dsonar.token=${SONAR_TOKEN}\
-                             -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
-                    '''
+                    sh 'mvn sonar:sonar -Dsonar.projectKey=spring-boot-app -Dsonar.token=${SONAR_TOKEN} -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml'
                 }
             }
         }

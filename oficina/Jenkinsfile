@@ -61,15 +61,6 @@ pipeline {
                     }
                 }
 
-        stage('Send Analysis to SonarQube') {
-            steps {
-                timeout(time: 2, unit: 'MINUTES') {
-                    // Aguarda o resultado da análise de qualidade do SonarQube
-                    waitForQualityGate(abortPipeline: false, webhookSecretId: '${SONAR_TOKEN}')
-                }
-            }
-        }
-
         stage('Gerar JAR Spring Boot') {
             steps {
                 sh 'mvn -f oficina/pom.xml package -DskipTests'

@@ -7,7 +7,7 @@ services:
       container_name: jenkins_server
       restart: unless-stopped
       environment:
-        SONAR_TOKEN: sqp_dd1f0e86af2debf09876f43707b21afb5d19c149
+        SONAR_TOKEN: "sqp_36bb3c46c4726bee9496230d58ce2f772cdf4836"
       ports:
         - "8080:8080"
         - "50000:50000"

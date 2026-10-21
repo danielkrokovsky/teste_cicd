@@ -18,6 +18,7 @@ unclassified:
     installations:
       - name: "SonarQube"
         serverUrl: "http://sonarqube:9000"
+        credentialsId: "sonar-token-java"
 
 credentials:
   system:
@@ -52,27 +53,25 @@ jobs:
                       jdk 'JDK-21'
                       maven 'maven'
                   }
-                  options {
-                      buildDiscarder(logRotator(numToKeepStr: '5'))
-                      timeout(time: 1, unit: 'HOURS')
+
+                  environment {
+                      // Nome da instalação do Sonar declarada no jenkins.yaml
+                      SONAR_SERVER = 'SonarQube'
                   }
+
                   stages {
-                      
-                      stage('Checkout') {
+                      stage('Compilação e Testes') {
                           steps {
-                              echo 'Rodando a partir do arquivo Jenkins.yaml'
-                              // Se for usar Git, descomente e substitua pela sua URL/branch:
-                              // git branch: 'main', url: 'https://github.com/usuario/spring-boot-demo.git'
-                              echo 'Código clonado com sucesso.'
-                          }
-                      }
-                      stage('Build & Testes com JaCoCo') {
-                          steps {
-                              sh 'mvn -f oficina/pom.xml clean verify jacoco:report'
+                              echo 'Rodando a partir do arquivo Jenkinsfile'
+                              echo 'Compilando Spring Boot e executando testes com JaCoCo...'
+                              sh 'mvn -f oficina/pom.xml verify jacoco:report'
                           }
                           post {
                               always {
+                                  // Publica relatório de testes unitários
                                   junit testResults: '**/target/surefire-reports/*.xml', allowEmptyResults: true
+
+                                  // Publica cobertura do JaCoCo no Jenkins
                                   jacoco(
                                       execPattern: '**/target/*.exec',
                                       classPattern: '**/target/classes',
@@ -81,31 +80,50 @@ jobs:
                               }
                           }
                       }
-                      stage('SonarQube Analysis') {
+
+                      stage('Análise SonarQube') {
                           steps {
                               echo 'Enviando métricas para o SonarQube...'
-                              withSonarQubeEnv(env.SONAR_SERVER) {
+                              withSonarQubeEnv('SonarQube') {
                                   withCredentials([string(credentialsId: 'sonar-token-java', variable: 'SONAR_TOKEN')]) {
                                       sh '''
                                           mvn -f oficina/pom.xml \
                                               org.sonarsource.scanner.maven:sonar-maven-plugin:3.11.0.3922:sonar \
-                                             -Dsonar.projectKey=spring-boot-app \
-                                             -Dsonar.token=${SONAR_TOKEN} \
-                                             -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+                                              -Dsonar.host.url=http://sonarqube:9000 \
+                                              -Dsonar.projectKey=spring-boot-app \
+                                              -Dsonar.token=${SONAR_TOKEN} \
+                                              -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
                                       '''
                                   }
                               }
                           }
                       }
-                      stage('Empacotamento Spring Boot') {
+                      stage('Gerar JAR Spring Boot') {
                           steps {
                               sh 'mvn -f oficina/pom.xml package -DskipTests'
-                              archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
+                              archiveArtifacts artifacts: '**/target/*.jar', allowEmptyArchive: false
                           }
                       }
                   }
               }
             '''.stripIndent())
+          }
+        }
+      }
+  - script: >
+      pipelineJob('teste_cicd-github') {
+        definition {
+          cpsScm {
+            scm {
+              git {
+                remote {
+                  url('https://github.com/danielkrokovsky/teste_cicd.git')
+                }
+                branch('*/main')
+              }
+            }
+            scriptPath('oficina/Jenkinsfile')
+            lightweight()
           }
         }
       }

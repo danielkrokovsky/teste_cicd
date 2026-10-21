@@ -3,8 +3,11 @@ services:
       build:
         context: .
         dockerfile: Dockerfile
+      image: jenkins/pos:latest
       container_name: jenkins_server
       restart: unless-stopped
+      environment:
+        SONAR_TOKEN: sqp_dd1f0e86af2debf09876f43707b21afb5d19c149
       ports:
         - "8080:8080"
         - "50000:50000"

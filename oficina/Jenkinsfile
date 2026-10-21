@@ -89,6 +89,7 @@ pipeline {
     stages {
         stage('Compilação e Testes') {
             steps {
+                echo 'Rodando a partir do arquivo Jenkinsfile'
                 echo 'Compilando Spring Boot e executando testes com JaCoCo...'
                 sh 'mvn -f oficina/pom.xml clean verify jacoco:report'
             }

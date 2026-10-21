@@ -71,16 +71,19 @@ jobs:
                               }
                           }
                       }
-                      stage('Sonar_qube') {
+                      stage('SonarQube Analysis') {
                           steps {
-                           withCredentials([string(credentialsId: 'sonar-token-java', variable: 'SONAR_TOKEN')]) {
-                              sh '''
-                                 mvn -f oficina/pom.xml verify sonar:sonar \
-                                   -Dsonar.projectKey=spring-boot-app \
-                                   -Dsonar.host.url=http://sonarqube:9000 \
-                                   -Dsonar.token=${SONAR_TOKEN}\
-                                   -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
-                              '''
+                              echo 'Enviando métricas para o SonarQube...'
+                              withSonarQubeEnv(env.SONAR_SERVER) {
+                                  withCredentials([string(credentialsId: 'sonar-token-java', variable: 'SONAR_TOKEN')]) {
+                                      sh '''
+                                          mvn -f oficina/pom.xml \
+                                              org.sonarsource.scanner.maven:sonar-maven-plugin:3.11.0.3922:sonar \
+                                             -Dsonar.projectKey=spring-boot-app \
+                                             -Dsonar.token=${SONAR_TOKEN} \
+                                             -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+                                      '''
+                                  }
                               }
                           }
                       }

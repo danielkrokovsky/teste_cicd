@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    options {
+        skipDefaultCheckout(true)
+    }
+
     // Utiliza as ferramentas configuradas anteriormente no JCasC
     tools {
         jdk 'JDK-21'
@@ -13,6 +17,12 @@ pipeline {
     }
 
     stages {
+        stage('Baixar projeto') {
+            steps {
+                checkout scm
+            }
+        }
+
         stage('Compilação e Testes') {
             steps {
                 echo 'Rodando a partir do arquivo Jenkinsfile'

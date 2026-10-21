@@ -61,7 +61,6 @@ pipeline {
                                 org.sonarsource.scanner.maven:sonar-maven-plugin:3.11.0.3922:sonar \
                                 -Dsonar.host.url=http://sonarqube:9000 \
                                 -Dsonar.projectKey=spring-boot-app \
-                                -Dsonar.token=${SONAR_TOKEN} \
                                 -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
                         '''
                     }

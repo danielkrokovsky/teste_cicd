@@ -64,7 +64,7 @@ jobs:
                           steps {
                               echo 'Rodando a partir do arquivo Jenkinsfile'
                               echo 'Compilando Spring Boot e executando testes com JaCoCo...'
-                              sh 'mvn -f oficina/pom.xml verify jacoco:report'
+                              sh 'mvn -f oficina/pom.xml install jacoco:report'
                           }
                           post {
                               always {
@@ -90,7 +90,7 @@ jobs:
                                           'org.sonarsource.scanner.maven:sonar-maven-plugin:3.11.0.3922:sonar ' +
                                           '-Dsonar.host.url=http://sonarqube:9000 ' +
                                           '-Dsonar.projectKey=spring-boot-app ' +
-                                          '-Dsonar.token=$SONAR_TOKEN ' +
+                                          '-Dsonar.token=${SONAR_TOKEN}' +
                                           '-Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml'
                                   }
                               }

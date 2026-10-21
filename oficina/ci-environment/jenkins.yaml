@@ -78,7 +78,7 @@ jobs:
                                   withCredentials([string(credentialsId: 'sonar-token-java', variable: 'SONAR_TOKEN')]) {
                                       sh '''
                                           mvn -f oficina/pom.xml \
-                                              org.sonarsource.scanner.maven:sonar-maven-plugin:3.11.0.3922:sonar \
+                                              org.sonarsource.scanner.maven:sonar-maven-plugin:5.8.0.7211:sonar \
                                              -Dsonar.projectKey=spring-boot-app \
                                              -Dsonar.token=${SONAR_TOKEN} \
                                              -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml

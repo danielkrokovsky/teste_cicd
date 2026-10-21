@@ -74,7 +74,7 @@ jobs:
                           }
                       }
 
-                      stage('Testes unitários) {
+                      stage('Compilação e Testes') {
                           steps {
                               echo 'Compilando Spring Boot e executando testes com JaCoCo...'
                               sh '${MAVEN_POM} install jacoco:report'

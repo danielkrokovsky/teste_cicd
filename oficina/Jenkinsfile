@@ -86,12 +86,19 @@ pipeline {
         SONAR_SERVER = 'SonarQube'
     }
 
+    stage('Testes unitarios]') {
+                steps {
+                    sh 'mvn -f oficina/pom.xml clean install'
+                    archiveArtifacts artifacts: '**/target/*.jar', allowEmptyArchive: false
+                }
+            }
+
     stages {
         stage('Compilação e Testes') {
             steps {
                 echo 'Rodando a partir do arquivo Jenkinsfile'
                 echo 'Compilando Spring Boot e executando testes com JaCoCo...'
-                sh 'mvn -f oficina/pom.xml clean verify jacoco:report'
+                sh 'mvn -f oficina/pom.xml verify jacoco:report'
             }
             post {
                 always {

@@ -14,7 +14,6 @@ pipeline {
     environment {
         // Nome da instalação do Sonar declarada no jenkins.yaml
         SONAR_SERVER = 'SonarQube'
-        MAVEN_POM = 'mvn -f oficina/pom.xml'
     }
 
     stages {
@@ -35,7 +34,7 @@ pipeline {
             steps {
                 echo 'Rodando a partir do arquivo Jenkinsfile'
                 echo 'Compilando Spring Boot e executando testes com JaCoCo...'
-                sh '${MAVEN_POM} verify jacoco:report'
+                sh 'mvn -f oficina/pom.xml verify jacoco:report'
             }
             post {
                 always {
@@ -58,7 +57,7 @@ pipeline {
                 withSonarQubeEnv('SonarQube') {
                     withCredentials([string(credentialsId: 'sonar-token-java', variable: 'SONAR_TOKEN')]) {
                         sh '''
-                            ${MAVEN_POM} clean verify \
+                            mvn -f oficina/pom.xml clean verify \
                             org.sonarsource.scanner.maven:sonar-maven-plugin:3.11.0.3922:sonar \
                             -Dsonar.host.url=http://sonarqube:9000 \
                             -Dsonar.projectKey=spring-boot-app \
@@ -70,7 +69,7 @@ pipeline {
         }
         stage('Gerar JAR Spring Boot') {
             steps {
-                sh '${MAVEN_POM} package -DskipTests'
+                sh 'mvn -f oficina/pom.xml package -DskipTests'
                 archiveArtifacts artifacts: '**/target/*.jar', allowEmptyArchive: false
             }
         }

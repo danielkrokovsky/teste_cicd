@@ -57,10 +57,11 @@ jobs:
                   environment {
                       // Nome da instalação do Sonar declarada no jenkins.yaml
                       SONAR_SERVER = 'SonarQube'
+                      MAVEN_POM = 'mvn -f oficina/pom.xml'
                   }
 
                   stages {
-                      stage('Baixar projeto') {
+                      stage('Download do projeto') {
                           steps {
                               echo 'Baixando projeto da branch main'
                               deleteDir()
@@ -73,11 +74,10 @@ jobs:
                           }
                       }
 
-                      stage('Compilação e Testes') {
+                      stage('Testes unitários) {
                           steps {
-                              echo 'Rodando a partir do arquivo Jenkinsfile'
                               echo 'Compilando Spring Boot e executando testes com JaCoCo...'
-                              sh 'mvn -f oficina/pom.xml install jacoco:report'
+                              sh '${MAVEN_POM} install jacoco:report'
                           }
                           post {
                               always {
@@ -99,7 +99,7 @@ jobs:
                               echo 'Enviando métricas para o SonarQube...'
                               withSonarQubeEnv('SonarQube') {
                                   withCredentials([string(credentialsId: 'sonar-token-java', variable: 'SONAR_TOKEN')]) {
-                                      sh 'mvn -f oficina/pom.xml clean verify ' +
+                                      sh '${MAVEN_POM} clean verify ' +
                                           'org.sonarsource.scanner.maven:sonar-maven-plugin:3.11.0.3922:sonar ' +
                                           '-Dsonar.host.url=http://sonarqube:9000 ' +
                                           '-Dsonar.projectKey=spring-boot-app ' +
@@ -110,7 +110,7 @@ jobs:
                       }
                       stage('Gerar JAR Spring Boot') {
                           steps {
-                              sh 'mvn -f oficina/pom.xml package -DskipTests'
+                              sh '${MAVEN_POM} package -DskipTests'
                               archiveArtifacts artifacts: '**/target/*.jar', allowEmptyArchive: false
                           }
                       }

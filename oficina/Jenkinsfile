@@ -37,12 +37,12 @@ pipeline {
         stage('Sonar_qube') {
             steps {
                 echo 'Enviando métricas para o SonarQube...'
-                withSonarQubeEnv(env.SONAR_SERVER) {
+                   withCredentials([string(credentialsId: 'sonar-token-java', variable: 'SONAR_TOKEN')]) {
                     sh '''
                            mvn -f oficina/pom.xml verify sonar:sonar \
                              -Dsonar.projectKey=spring-boot-app \
                              -Dsonar.host.url=http://sonarqube:9000 \
-                             -Dsonar.token=${JENKINS_TOKEN}\
+                             -Dsonar.token=${SONAR_TOKEN}\
                              -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
                     '''
                 }
@@ -53,7 +53,7 @@ pipeline {
             steps {
                 timeout(time: 2, unit: 'MINUTES') {
                     // Aguarda o resultado da análise de qualidade do SonarQube
-                    waitForQualityGate(abortPipeline: false, webhookSecretId: '${JENKINS_TOKEN}')
+                    waitForQualityGate(abortPipeline: false, webhookSecretId: '${SONAR_TOKEN}')
                 }
             }
         }

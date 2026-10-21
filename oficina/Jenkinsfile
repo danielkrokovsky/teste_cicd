@@ -18,12 +18,17 @@ pipeline {
 
     stages {
         stage('Baixar projeto') {
-          steps {
-              echo 'Baixando projeto'
-              git branch: '*/main', url: 'https://github.com/danielkrokovsky/teste_cicd.git'
-
-          }
-      }
+            steps {
+                echo 'Baixando projeto da branch main'
+                deleteDir()
+                checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: '*/main']],
+                    userRemoteConfigs: [[url: 'https://github.com/danielkrokovsky/teste_cicd.git']]
+                ])
+                sh 'git rev-parse --show-toplevel && git log -1 --oneline'
+            }
+        }
 
         stage('Compilação e Testes') {
             steps {

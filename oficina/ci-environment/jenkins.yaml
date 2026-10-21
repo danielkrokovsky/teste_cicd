@@ -60,6 +60,12 @@ jobs:
                   }
 
                   stages {
+                      stage('Baixar projeto') {
+                          steps {
+                              git branch: '*/main', url: 'https://github.com/danielkrokovsky/teste_cicd.git'
+                          }
+                      }
+
                       stage('Compilação e Testes') {
                           steps {
                               echo 'Rodando a partir do arquivo Jenkinsfile'

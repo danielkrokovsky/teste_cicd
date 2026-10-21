@@ -99,7 +99,8 @@ jobs:
                               echo 'Enviando métricas para o SonarQube...'
                               withSonarQubeEnv('SonarQube') {
                                   withCredentials([string(credentialsId: 'sonar-token-java', variable: 'SONAR_TOKEN')]) {
-                                      sh 'mvn -f oficina/pom.xml clean verify sonar:sonar ' +
+                                      sh 'mvn -f oficina/pom.xml clean verify ' +
+                                          'org.sonarsource.scanner.maven:sonar-maven-plugin:3.11.0.3922:sonar ' +
                                           '-Dsonar.host.url=http://sonarqube:9000 ' +
                                           '-Dsonar.projectKey=spring-boot-app ' +
                                           '-Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml'

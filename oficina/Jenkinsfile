@@ -34,33 +34,23 @@ pipeline {
             }
         }
 
-        /* stage('Sonar_qube') {
-                    steps {
-                        echo 'Enviando métricas para o SonarQube...'
-                        // Utiliza a instalação configurada no JCasC / Jenkins global
-                        withSonarQubeEnv('SonarQube') {
-                            withCredentials([string(credentialsId: 'sonar-token-java', variable: 'SONAR_TOKEN')]) {
-                                sh '''
-                                    mvn -f oficina/pom.xml \
-                                        org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
-                                        -Dsonar.projectKey=spring-boot-app \
-                                        -Dsonar.token=${SONAR_TOKEN} \
-                                        -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
-                                '''
-                            }
-                        }
+        stage('Análise SonarQube') {
+            steps {
+                echo 'Enviando métricas para o SonarQube...'
+                withSonarQubeEnv('SonarQube') {
+                    withCredentials([string(credentialsId: 'sonar-token-java', variable: 'SONAR_TOKEN')]) {
+                        sh '''
+                            mvn -f oficina/pom.xml \
+                                org.sonarsource.scanner.maven:sonar-maven-plugin:3.11.0.3922:sonar \
+                                -Dsonar.host.url=http://sonarqube:9000 \
+                                -Dsonar.projectKey=spring-boot-app \
+                                -Dsonar.token=${SONAR_TOKEN} \
+                                -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+                        '''
                     }
                 }
-
-                stage('Quality Gate') {
-                    steps {
-                        timeout(time: 2, unit: 'MINUTES') {
-                            // Aguarda o webhook configurado no SonarQube avisar o Jenkins
-                            waitForQualityGate(abortPipeline: true)
-                        }
-                    }
-                }
- */
+            }
+        }
         stage('Gerar JAR Spring Boot') {
             steps {
                 sh 'mvn -f oficina/pom.xml package -DskipTests'

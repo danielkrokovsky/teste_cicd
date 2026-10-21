@@ -18,10 +18,12 @@ pipeline {
 
     stages {
         stage('Baixar projeto') {
-            steps {
-                checkout scm
-            }
-        }
+          steps {
+              git branch: '*/main', url: 'https://github.com/danielkrokovsky/teste_cicd.git'
+              sh 'git clone https://github.com/danielkrokovsky/teste_cicd.git'
+              sh 'cd teste_cicd'
+          }
+      }
 
         stage('Compilação e Testes') {
             steps {

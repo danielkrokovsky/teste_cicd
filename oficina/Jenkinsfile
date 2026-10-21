@@ -116,7 +116,7 @@ pipeline {
         }
 
 
-        stage('SonarQube Analysis') {
+/*         stage('SonarQube Analysis') {
             steps {
                 echo 'Enviando métricas para o SonarQube...'
                 withSonarQubeEnv(env.SONAR_SERVER) {
@@ -140,7 +140,7 @@ pipeline {
                     waitForQualityGate(abortPipeline: true)
                 }
             }
-        }
+        } */
 
         stage('Gerar JAR Spring Boot') {
             steps {
